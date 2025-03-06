@@ -65,7 +65,7 @@ model.summary()
 #model.save("cifar_trained_model.keras")
 
 # Загрузка модели
-model = keras.models.load_model('cifar_trained_model.keras')
+model = keras.models.load_model('/Users/vnaumq/code/DACHA/2/cifar_trained_model.keras')
 
 # Оценка точности на тестовой выборке
 test_loss, test_acc = model.evaluate(x_test, y_test)

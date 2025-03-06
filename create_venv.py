@@ -3,18 +3,19 @@ import sys
 import subprocess
 import platform
 
-# Получаем полный путь к текущему скрипту
-script_path = os.path.realpath(__file__)
-print("Скрипт находится здесь:", script_path)
 
-# Получаем директорию, в которой лежит скрипт
-script_dir = os.path.dirname(script_path)
-print("Директория скрипта:", script_dir)
 
 
 def create_virtual_environment():
     """Создаёт виртуальное окружение в папке Dacha."""
-    dacha_dir = "D:\\papka\\papochka\\Dacha"
+    # Получаем полный путь к текущему скрипту
+    script_path = os.path.realpath(__file__)
+    print("Скрипт находится здесь:", script_path)
+
+    # Получаем директорию, в которой лежит скрипт
+    script_dir = os.path.dirname(script_path)
+    print("Директория скрипта:", )
+    dacha_dir = script_dir
     venv_dir = os.path.join(dacha_dir, "venv")
 
     if not os.path.exists(dacha_dir):

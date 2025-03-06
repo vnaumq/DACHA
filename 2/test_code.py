@@ -14,13 +14,11 @@ from tensorflow.keras.layers import Dense, Flatten
 x_train = x_train / 255.0
 x_test = x_test / 255.0
 
-# Создание модели
 model = keras.Sequential([
     keras.layers.Flatten(input_shape=(28, 28)),
-    keras.layers.Dense(128, activation="relu"),
+    keras.layers.Dense(256, activation="relu"),  # Увеличиваем до 256
     keras.layers.Dense(10, activation="softmax")
 ])
-
 # Компиляция модели
 model.compile(optimizer=tf.keras.optimizers.SGD(),
               loss='sparse_categorical_crossentropy',
