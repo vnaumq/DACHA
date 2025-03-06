@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from tensorflow import keras
-%matplotlib inline
+
 # импорт дата сета
 from tensorflow.keras.datasets import fashion_mnist
 
@@ -27,6 +27,7 @@ plt.figure()
 plt.imshow(x_train[1])
 plt.colorbar()
 plt.grid(False)
+plt.show()
 
 # Нормализует данные, деля каждое значение пикселя на 255, чтобы привести их в диапазон от 0 до 1.
 x_train = x_train / 255
@@ -36,6 +37,7 @@ plt.figure()
 plt.imshow(x_train[1])
 plt.colorbar()
 plt.grid(False)
+plt.show()
 
 # первые 25 изображений из тренировочного набора в виде сетки 5x5
 plt.figure(figsize=(10,10))
@@ -45,7 +47,7 @@ for i in range (25):
   plt.yticks([])
   plt.imshow(x_train[i], cmap=plt.cm.binary)
   plt.xlabel(class_names[y_train[i]])
-
+  plt.show()
 # Создает последовательную модель нейронной сети с тремя слоями:
 # слой выравнивания (преобразует 2D-изображения в 1D-вектор),
 # плотный слой с 128 нейронами и функцией активации ReLU и
@@ -79,12 +81,13 @@ predictions = model.predict(x_train)
 np.argmax(predictions[124])
 
 # Выводит реальную метку класса для 125-го изображения в тренировочном наборе.
-y_train[124]
+print(f"y_train = {y_train[124]}")
 
 plt.figure()
 plt.imshow(x_train[124])
 plt.colorbar()
 plt.grid(False)
+plt.show()
 
 # Выводит название класса с наибольшей вероятностью для 125-го изображения на основе предсказаний модели.
-class_names[np.argmax(predictions[124])]
+print(f'class_names = {class_names[np.argmax(predictions[124])]}')
