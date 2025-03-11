@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import openpyxl
 
 # Определяем путь к папке files относительно расположения скрипта
 base_dir = os.path.dirname(__file__)  # Директория, где находится скрипт
@@ -85,7 +86,7 @@ statistics = (
 )
 
 # Сохраняем статистику в CSV
-statistics.to_csv(os.path.join(output_folder, "statistics.csv"), index=False)
+statistics.to_excel(os.path.join(output_folder, "statistics.xlsx"), index=False)
 
 # Визуализация гистограмм для сравнения
 for channel in ["H", "S", "V"]:
