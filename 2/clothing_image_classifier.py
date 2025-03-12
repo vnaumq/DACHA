@@ -97,7 +97,7 @@ def load_and_preprocess_images(folder_path):
     return np.array(images), filenames
 
 # Загрузка и предобработка изображений из папки
-images, filenames = load_and_preprocess_images('files/ten_clothing_images_resized')
+images, filenames = load_and_preprocess_images('files/ten_clothing_images_resized/inv')
 
 # Классификация изображений
 predictions = model.predict(images)
@@ -107,6 +107,9 @@ class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
                'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
 
 for i, (pred, filename) in enumerate(zip(predictions, filenames)):
+    print(pred)
+    print(pred.max())
     predicted_class = np.argmax(pred)  # Индекс класса с максимальной вероятностью
     confidence = pred[predicted_class]  # Уверенность модели
     print(f"File: {filename}, Predicted class: {class_names[predicted_class]}, Confidence: {confidence:.2f}")
+    print("="*100)
