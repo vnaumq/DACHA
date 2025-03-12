@@ -6,6 +6,7 @@ from tensorflow import keras
 from tensorflow.keras.datasets import fashion_mnist
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Dropout
+import os
 
 # Загрузка данных
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
@@ -32,35 +33,45 @@ model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
-history = model.fit(x_train, y_train, epochs=15, batch_size=512, shuffle=True, validation_split=0.1)
+model_path = '2/files/model/perfect_model.keras'
+os.makedirs(os.path.dirname(model_path), exist_ok=True)  # Создаём папку, если её нет
+
+if not os.path.exists(model_path):
+    history = model.fit(x_train, y_train, epochs=15, batch_size=512, shuffle=True, validation_split=0.1)
+    model.save(model_path)
+else:
+    model = keras.models.load_model(model_path)
+    history = None # Нет истории обучения
 
 # Оценка модели
 test_loss, test_acc = model.evaluate(x_test, y_test)
 print('Test accuracy:', test_acc)
+if history:
+    # Построение графиков
+    plt.figure(figsize=(12, 5))
 
-# Построение графиков
-plt.figure(figsize=(12, 5))
+    # 1. График функции потерь
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['loss'], label='Training Loss')
+    plt.plot(history.history['val_loss'], label='Validation Loss')
+    plt.title('Loss Over Epochs')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True)
 
-# 1. График функции потерь
-plt.subplot(1, 2, 1)
-plt.plot(history.history['loss'], label='Training Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
-plt.title('Loss Over Epochs')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.legend()
-plt.grid(True)
+    # 2. График точности
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['accuracy'], label='Training Accuracy')
+    plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+    plt.title('Accuracy Over Epochs')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.grid(True)
 
-# 2. График точности
-plt.subplot(1, 2, 2)
-plt.plot(history.history['accuracy'], label='Training Accuracy')
-plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
-plt.title('Accuracy Over Epochs')
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.legend()
-plt.grid(True)
-
-# Отображение графиков
-plt.tight_layout()
-plt.show()
+    # Отображение графиков
+    plt.tight_layout()
+    plt.show()
+else:
+    print('Модель была уже создана')
