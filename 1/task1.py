@@ -4,72 +4,76 @@ import os
 
 # Определяем путь к папке files относительно расположения скрипта
 base_dir = os.path.dirname(__file__)
-files_dir = os.path.join(base_dir, "files", "task1")
+files_dir = os.path.join(base_dir, "files", "photo1")
 
-# Получаем список всех JPG-файлов и берем первые 5
-image_names = [f for f in os.listdir(files_dir) if f.lower().endswith('.jpg')]
-image_names = image_names[:5]
+# Максимальный размер изображения (в пикселях)
+MAX_SIZE = (800, 800)  # Ограничение 800x800 пикселей
 
-# Полные пути к изображениям
-image_paths = [os.path.join(files_dir, name) for name in image_names]
+# Получаем все файлы .jpg из папки и берём первые 5
+image_files = [f for f in os.listdir(files_dir) if f.lower().endswith('.jpg')]
+image_paths = [os.path.join(files_dir, f) for f in image_files[:5]]
 
-# Загружаем изображения
-images = []
-for path in image_paths:
+# Параметры сетки
+rows, cols = 2, 3
+grid_images = []
+
+# Чтение и обработка изображений
+for i, path in enumerate(image_paths):
     try:
+        # Читаем изображение через OpenCV (BGR формат)
         img = cv2.imread(path)
         if img is None:
-            raise FileNotFoundError
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        images.append(img)
-    except FileNotFoundError:
-        print(f"Файл не найден: {path}")
-        images.append(None)
+            raise Exception("Не удалось загрузить изображение")
 
-# Проверяем, достаточно ли изображений
-if len(images) < 5:
-    print(f"Найдено только {len(images)} изображений из требуемых 5")
-    # Заполняем недостающие изображения черными прямоугольниками позже
+        # Получаем размеры изображения
+        h, w = img.shape[:2]
 
-# Определяем максимальные размеры только для существующих изображений
-valid_images = [img for img in images if img is not None]
-if not valid_images:
-    print("Нет доступных изображений для обработки")
-    exit()
+        # Проверяем и уменьшаем размер если нужно
+        if w > MAX_SIZE[0] or h > MAX_SIZE[1]:
+            scale = min(MAX_SIZE[0]/w, MAX_SIZE[1]/h)
+            new_w, new_h = int(w * scale), int(h * scale)
+            img = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_LANCZOS4)
 
-max_height = max(img.shape[0] for img in valid_images)
-max_width = max(img.shape[1] for img in valid_images)
+        # Добавляем название
+        filename = os.path.basename(path)[:15] + "..."
+        cv2.putText(img, f"Img {i+1}: {filename}",
+                   (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
+                   0.7, (255, 255, 255), 2)
 
-# Приводим все изображения к одному размеру и заполняем недостающие
-for i in range(5):
-    if i < len(images) and images[i] is not None:
-        # Изменяем размер изображения, если он отличается
-        images[i] = cv2.resize(images[i], (max_width, max_height))
-    else:
-        # Создаем черное изображение нужного размера
-        images.append(np.zeros((max_height, max_width, 3), dtype=np.uint8))
+        # Сохраняем обработанное изображение
+        grid_images.append(img)
 
-# Создаем сетку 2x3
-try:
-    row1 = np.hstack((images[0], images[1], images[2]))
-    row2 = np.hstack((images[3], images[4], np.zeros((max_height, max_width, 3), dtype=np.uint8)))
-    grid = np.vstack((row1, row2))
+    except Exception as e:
+        print(f"Ошибка при обработке {path}: {str(e)}")
+        # Добавляем пустое изображение в случае ошибки
+        grid_images.append(np.zeros((MAX_SIZE[1], MAX_SIZE[0], 3), dtype=np.uint8))
 
-    # Добавляем заголовки
-    for i in range(5):
-        if images[i].sum() > 0:  # Проверяем, не черное ли изображение
-            row = 0 if i < 3 else 1
-            col = i % 3
-            x = col * max_width + 10
-            y = row * max_height + 30
-            cv2.putText(grid, f"Image {i+1}", (x, y),
-                       cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+# Создаем пустую сетку
+if grid_images:
+    # Определяем максимальные размеры для сетки
+    max_h = max(img.shape[0] for img in grid_images)
+    max_w = max(img.shape[1] for img in grid_images)
 
-    # Отображаем результат
+    # Создаем пустое изображение для всей сетки
+    grid_height = max_h * rows
+    grid_width = max_w * cols
+    grid = np.zeros((grid_height, grid_width, 3), dtype=np.uint8)
+
+    # Заполняем сетку изображениями
+    for idx, img in enumerate(grid_images):
+        row = idx // cols
+        col = idx % cols
+        y_start = row * max_h
+        x_start = col * max_w
+        h, w = img.shape[:2]
+        grid[y_start:y_start+h, x_start:x_start+w] = img
+
+    # Конвертируем BGR в RGB для корректного отображения
+    grid_rgb = cv2.cvtColor(grid, cv2.COLOR_BGR2RGB)
+
+    # Показываем результат
     cv2.imshow("Image Grid", grid)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-except ValueError as e:
-    print(f"Ошибка при объединении изображений: {e}")
-    print("Проверьте, что все изображения имеют одинаковую высоту")
+else:
+    print("Нет изображений для отображения")
