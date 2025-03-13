@@ -4,7 +4,7 @@ import os
 
 # Определяем путь к папке files относительно расположения скрипта
 base_dir = os.path.dirname(__file__)
-files_dir = os.path.join(base_dir, "files", "task1")
+files_dir = os.path.join(base_dir, "files", "photo1")
 
 # Получаем список всех JPG-файлов и берем первые 5
 image_names = [f for f in os.listdir(files_dir) if f.lower().endswith('.jpg')]
