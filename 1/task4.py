@@ -7,10 +7,8 @@ import openpyxl
 
 # Определяем путь к папке files относительно расположения скрипта
 base_dir = os.path.dirname(__file__)  # Директория, где находится скрипт
-files_dir = os.path.join(base_dir, "files/photo2")  # Путь к папке files
-output_folder = os.path.join(
-    base_dir, "files/task4"
-)  # Папка для сохранения результатов
+files_dir = os.path.join(base_dir, "files", "photo2")  # Путь к папке files
+output_folder = os.path.join(base_dir, "files", "task4")  # Папка для сохранения результатов
 
 
 # Функция для вычисления гистограмм и статистики

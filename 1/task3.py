@@ -1,10 +1,11 @@
 import cv2
 import os
 
-# Загружаем изображение
-input_folder = "files/photo1"  # Папка с исходными изображениями
-output_folder = "files/task3"  # Папка для сохранения результатов
 
+# Определяем путь к папке files относительно расположения скрипта
+base_dir = os.path.dirname(__file__)
+input_folder = os.path.join(base_dir, "files", "photo1")
+output_folder = os.path.join(base_dir, "files", "task3")  # Папка для сохранения результатов
 # Создаем папку для сохранения, если её нет
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
