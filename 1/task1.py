@@ -50,7 +50,7 @@ for i, path in enumerate(image_paths):
 
 # Создаем пустую сетку
 if grid_images:
-    # Определяем максимальные размеры для сетки
+    # Определяем максимальные размеры для ячеек сетки
     max_h = max(img.shape[0] for img in grid_images)
     max_w = max(img.shape[1] for img in grid_images)
 
@@ -59,13 +59,23 @@ if grid_images:
     grid_width = max_w * cols
     grid = np.zeros((grid_height, grid_width, 3), dtype=np.uint8)
 
-    # Заполняем сетку изображениями
+    # Заполняем сетку изображениями с центрированием
     for idx, img in enumerate(grid_images):
         row = idx // cols
         col = idx % cols
-        y_start = row * max_h
-        x_start = col * max_w
+
+        # Размеры текущего изображения
         h, w = img.shape[:2]
+
+        # Вычисляем смещение для центрирования
+        y_offset = (max_h - h) // 2  # Вертикальное смещение
+        x_offset = (max_w - w) // 2  # Горизонтальное смещение
+
+        # Координаты в сетке
+        y_start = row * max_h + y_offset
+        x_start = col * max_w + x_offset
+
+        # Вставляем изображение с учётом смещения
         grid[y_start:y_start+h, x_start:x_start+w] = img
 
     # Конвертируем BGR в RGB для корректного отображения
