@@ -7,9 +7,9 @@ import openpyxl
 
 # Определяем путь к папке files относительно расположения скрипта
 base_dir = os.path.dirname(__file__)  # Директория, где находится скрипт
-files_dir = os.path.join(base_dir, "files1")  # Путь к папке files
+files_dir = os.path.join(base_dir, "files/photo2")  # Путь к папке files
 output_folder = os.path.join(
-    base_dir, "processed2_files"
+    base_dir, "files/task4"
 )  # Папка для сохранения результатов
 
 
@@ -101,4 +101,4 @@ for channel in ["H", "S", "V"]:
     plt.savefig(os.path.join(output_folder, f"histogram_{channel}.png"))
     plt.show()
 
-print("Обработка завершена! Результаты сохранены в папку 'processed1_files'.")
+print("Обработка завершена! Результаты сохранены в папку 'task4'.")

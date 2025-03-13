@@ -3,9 +3,9 @@ import os
 
 # Определяем путь к папке files относительно расположения скрипта
 base_dir = os.path.dirname(__file__)  # Директория, где находится скрипт
-files_dir = os.path.join(base_dir, "files")  # Путь к папке files
+files_dir = os.path.join(base_dir, "files/photo1")  # Путь к папке files
 output_folder = os.path.join(
-    base_dir, "processed1_files"
+    base_dir, "files/task2"
 )  # Папка для сохранения результатов
 
 # Проверяем текущую рабочую директорию

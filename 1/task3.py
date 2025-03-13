@@ -2,8 +2,8 @@ import cv2
 import os
 
 # Загружаем изображение
-input_folder = "files"  # Папка с исходными изображениями
-output_folder = "processed_files1"  # Папка для сохранения результатов
+input_folder = "files/photo1"  # Папка с исходными изображениями
+output_folder = "files/task3"  # Папка для сохранения результатов
 
 # Создаем папку для сохранения, если её нет
 if not os.path.exists(output_folder):
@@ -36,4 +36,4 @@ for filename in os.listdir(input_folder):
                 os.path.join(output_folder, f"{filename}_edges_{low}_{high}.jpg"), edges
             )
 
-print("Обработка завершена! Результаты сохранены в папку 'processed1_files'.")
+print("Обработка завершена! Результаты сохранены в папку 'task3'.")
