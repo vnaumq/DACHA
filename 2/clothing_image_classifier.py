@@ -10,7 +10,8 @@ from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 
 # Путь к файлу модели
-MODEL_PATH = 'fashion_mnist_model.h5'
+MODEL_PATH = 'files/model/fashion_mnist_model.h5'
+
 
 # Загрузка данных Fashion MNIST
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
@@ -54,7 +55,7 @@ else:
     # Оценка модели
     test_loss, test_acc = model.evaluate(x_test, y_test)
     print('Test accuracy:', test_acc)
-
+    
     # Построение графиков
     plt.figure(figsize=(12, 5))
 
