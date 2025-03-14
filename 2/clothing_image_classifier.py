@@ -10,7 +10,8 @@ from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 
 # Путь к файлу модели
-MODEL_PATH = 'files/model/fashion_mnist_model.h5'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'files', 'model', 'fashion_mnist_model.h5')
 
 
 # Загрузка данных Fashion MNIST
@@ -55,7 +56,7 @@ else:
     # Оценка модели
     test_loss, test_acc = model.evaluate(x_test, y_test)
     print('Test accuracy:', test_acc)
-    
+
     # Построение графиков
     plt.figure(figsize=(12, 5))
 
@@ -98,13 +99,13 @@ def load_and_preprocess_images(folder_path):
     return np.array(images), filenames
 
 # Загрузка и предобработка изображений из папки
-images, filenames = load_and_preprocess_images('files/ten_clothing_images_resized/inv')
+images, filenames = load_and_preprocess_images(BASE_DIR + '/files/ten_clothing_images_resized/inv')
 
 # Классификация изображений
 predictions = model.predict(images)
 
 # Вывод результатов
-class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 
+class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
                'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
 
 for i, (pred, filename) in enumerate(zip(predictions, filenames)):
