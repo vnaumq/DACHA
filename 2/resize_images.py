@@ -9,7 +9,7 @@ folder_path = BASE_DIR + '/files/ten_clothing_images'
 image_files = os.listdir(folder_path)
 
 # Создание папки для сохранения обработанных изображений
-output_folder = BASE_DIR+ 'files/ten_clothing_images_resized'
+output_folder = BASE_DIR+ '/files/ten_clothing_images_resized'
 os.makedirs(output_folder, exist_ok=True)
 
 # Обработка каждого изображения
