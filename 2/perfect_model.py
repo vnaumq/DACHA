@@ -5,17 +5,19 @@ import matplotlib.pyplot as plt
 from tensorflow import keras
 from tensorflow.keras.datasets import fashion_mnist
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D, BatchNormalization
+from tensorflow.keras.regularizers import l2
 import os
+from tensorflow.keras.callbacks import EarlyStopping
 
 # Константы для улучшения читаемости и гибкости кода
 IMG_SHAPE = (28, 28, 1)
-NUM_CLASSES = 10
-BATCH_SIZE = 64
-EPOCHS = 15
+NUM_CLASSES = 7
+BATCH_SIZE = 128
+EPOCHS = 45
 VALIDATION_SPLIT = 0.2
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, 'files', 'model', 'perfect_model.keras')
+MODEL_PATH = 'perfect_model.keras'
+
 
 def load_and_preprocess_data():
     """Загрузка и предобработка данных Fashion MNIST"""
@@ -30,37 +32,38 @@ def load_and_preprocess_data():
     x_train = x_train / 255.0
     x_test = x_test / 255.0
 
+    # Словарь для замены значений классов
+    mapping = {5: 6, 6: 4, 7: 6, 8: 5, 9: 6}
+
+    # Применение замены с помощью numpy
+    y_train = np.array([mapping.get(y, y) for y in y_train])
+    y_test = np.array([mapping.get(y, y) for y in y_test])
+
     return (x_train, y_train), (x_test, y_test)
 
 def create_model():
     """Создание архитектуры сверточной нейронной сети"""
     model = Sequential([
-        # Первый сверточный слой: 32 фильтра размером 3x3
-        Conv2D(32, (3, 3), activation='relu', input_shape=IMG_SHAPE),
-        # Второй сверточный слой: 64 фильтра
-        Conv2D(64, (3, 3), activation='relu', padding='same'),
-        # Слой субдискретизации для уменьшения размерности
-        MaxPooling2D((2, 2)),
-        # Dropout для предотвращения переобучения
-        Dropout(0.5),
-        # Третий сверточный слой: 128 фильтров
-        Conv2D(128, (3, 3), activation='relu'),
+        Conv2D(64, (3, 3), activation='relu', input_shape=IMG_SHAPE, kernel_regularizer=l2(0.001)),
+        BatchNormalization(),
+        Conv2D(128, (3, 3), activation='relu', padding='same', kernel_regularizer=l2(0.001)),
+        BatchNormalization(),
         MaxPooling2D((2, 2)),
         Dropout(0.5),
-        # Преобразование в одномерный вектор
+        Conv2D(256, (3, 3), activation='relu', kernel_regularizer=l2(0.001)),
+        BatchNormalization(),
+        MaxPooling2D((2, 2)),
+        Dropout(0.5),
         Flatten(),
-        # Полносвязный слой с 128 нейронами
-        Dense(128, activation='relu'),
-        # Выходной слой с softmax для классификации
+        Dense(128, activation='relu', kernel_regularizer=l2(0.001)),
+        BatchNormalization(),
+        Dropout(0.3),
         Dense(NUM_CLASSES, activation='softmax')
     ])
 
-    # Компиляция модели
-    model.compile(
-        optimizer='adam',
-        loss='sparse_categorical_crossentropy',
-        metrics=['accuracy']
-    )
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
+                  loss='sparse_categorical_crossentropy',
+                  metrics=['accuracy'])
 
     return model
 
@@ -96,11 +99,15 @@ def main():
     # Загрузка и предобработка данных
     (x_train, y_train), (x_test, y_test) = load_and_preprocess_data()
 
-    # Создание директории для модели, если она не существует
-    os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
 
     # Проверка существования сохраненной модели
     if not os.path.exists(MODEL_PATH):
+        early_stopping = EarlyStopping(
+          monitor='val_loss',  # Метрика, которую будем отслеживать (потери на валидации)
+          patience=10,          # Количество эпох без улучшения, после которых обучение остановится
+          restore_best_weights=True  # Восстановление весов модели с лучшей эпохи
+      )
+
         # Создание и обучение новой модели
         model = create_model()
         history = model.fit(
@@ -109,6 +116,7 @@ def main():
             epochs=EPOCHS,
             shuffle=True,
             validation_split=VALIDATION_SPLIT,
+            callbacks = [early_stopping]
         )
         # Сохранение обученной модели
         model.save(MODEL_PATH)
