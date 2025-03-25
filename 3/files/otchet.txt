@@ -1,0 +1,12 @@
+Initial file size: 14939.38 KB
+Resampled file size: 3734.88 KB
+Compressed file size: 678.21 KB
+Restored file size: 3734.88 KB
+
+Silent level: 20db
+
+compressed: mp3, 64k(bitrate)
+
+resemple: 22050 hz
+
+sr: None

@@ -14,7 +14,7 @@ print("Директория скрипта:", script_dir)
 
 def create_virtual_environment():
     """Создаёт виртуальное окружение в папке Dacha."""
-    dacha_dir = "D:\\papka\\papochka\\Dacha"
+    dacha_dir = "\\"
     venv_dir = os.path.join(dacha_dir, "venv")
 
     if not os.path.exists(dacha_dir):
